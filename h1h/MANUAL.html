@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H1-HUNTER SDR v1.0 - Käyttöohje / User manual</title>
+<style>
+:root{--bg:#ffffff;--fg:#1d1f23;--muted:#5d6470;--line:#d9dde3;--accent:#a36b00;--box:#f5f6f8;--code:#eef0f3}
+@media (prefers-color-scheme:dark){:root{--bg:#111214;--fg:#e6e6e6;--muted:#9aa1ab;--line:#2a2d33;--accent:#ffcc00;--box:#1a1c20;--code:#23262b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 "IBM Plex Sans","Segoe UI",system-ui,sans-serif}
+header{border-bottom:1px solid var(--line);padding:18px 16px}
+header .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between}
+h1{font-size:22px;margin:0}
+h1 span{color:var(--accent)}
+.lang button{font:inherit;padding:6px 14px;border:1px solid var(--line);background:var(--box);color:var(--fg);cursor:pointer;border-radius:4px}
+.lang button.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+.wrap{max-width:980px;margin:0 auto}
+main{padding:8px 16px 60px}
+nav.toc{background:var(--box);border:1px solid var(--line);border-radius:6px;padding:12px 18px;margin:18px 0}
+nav.toc ol{margin:6px 0 0;padding-left:22px;columns:2;column-gap:32px}
+nav.toc a{color:var(--fg)}
+h2{font-size:20px;margin:36px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+h3{font-size:17px;margin:22px 0 6px}
+p,li{max-width:76ch}
+code,kbd{font-family:"IBM Plex Mono",Consolas,monospace;font-size:14px;background:var(--code);padding:1px 5px;border-radius:3px}
+table{border-collapse:collapse;margin:10px 0;width:100%;max-width:900px}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--box)}
+.tip{border-left:3px solid var(--accent);background:var(--box);padding:8px 14px;margin:12px 0}
+.muted{color:var(--muted)}
+footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding:16px}
+[data-lang]{display:none}
+body.fi [data-lang="fi"],body.en [data-lang="en"]{display:block}
+@media (max-width:640px){nav.toc ol{columns:1}}
+@media print{.lang{display:none}body{background:#fff;color:#000}}
+</style>
+</head>
+<body class="fi">
+<header><div class="wrap">
+<h1>H1-HUNTER SDR <span>v1.0</span></h1>
+<div class="lang"><button id="b-fi" onclick="setLang('fi')">Suomi</button> <button id="b-en" onclick="setLang('en')">English</button></div>
+</div></header>
+<main class="wrap">
+
+<!-- ======================================================================= SUOMI -->
+<div data-lang="fi">
+<p><b>Käyttöohje.</b> H1-HUNTER SDR on RTL-SDR-vastaanotin, vetyviivaobservatorio (21 cm, 1420,405752 MHz) ja taivaankartoittaja samassa ohjelmassa. Ohjelma ei käytä verkkoa. Kaikki tallennetut tiedostot ovat tekstiä (CSV, JSON, TXT) tai PNG-kuvia; ainoat binääritiedostot ovat valinnainen raaka-IQ-tallenne ja valinnainen FITS-kuutio.</p>
+
+<nav class="toc"><b>Sisältö</b><ol>
+<li><a href="#fi-install">Asennus</a></li>
+<li><a href="#fi-hw">Laitteisto</a></li>
+<li><a href="#fi-quick">Pikaohje</a></li>
+<li><a href="#fi-rx">1 Receiver</a></li>
+<li><a href="#fi-obs">2 Observe</a></li>
+<li><a href="#fi-cal">Kalibrointi</a></li>
+<li><a href="#fi-view">Vetyviivanäkymä</a></li>
+<li><a href="#fi-rfi">Häiriöt ja Remove flagged</a></li>
+<li><a href="#fi-maps">3 Maps</a></li>
+<li><a href="#fi-data">4 Data &amp; Export</a></li>
+<li><a href="#fi-set">5 Settings</a></li>
+<li><a href="#fi-mount">Jalusta (ASCOM / INDI)</a></li>
+<li><a href="#fi-sci">Tieteellinen käyttö</a></li>
+<li><a href="#fi-trouble">Vianetsintä</a></li>
+</ol></nav>
+
+<div class="tip"><b>FIRST LIGHT - 1 minuutin yhteenveto</b>
+<ol>
+<li>Käynnistä vastaanotin (Start receiver).</li>
+<li>Osoita tyhjälle taivaalle kauas Linnunradasta ja paina <b>1. Cold</b>.</li>
+<li>Osoita maahan tai peitä syöttö absorberilla ja paina <b>2. Hot</b>.</li>
+<li>Osoita Linnunrataan.</li>
+<li>Paina <b>3. Measure</b>.</li>
+<li>Avaa <b>Maps</b>.</li>
+</ol></div>
+
+<h2 id="fi-install">1. Asennus</h2>
+<p>Ohjelma käynnistetään Pythonilla; asennusohjelmaa ei ole. Vaiheittaiset ohjeet käyttöjärjestelmittäin ovat paketin <code>README.txt</code>-tiedoston kohdassa <b>INSTALL</b> (GitHubissa: README, kohta Installation). Jokaisen komentolohkon voi kopioida ja liittää sellaisenaan komentokehotteeseen tai päätteeseen. Lyhyesti:</p>
+<ol>
+<li><b>Python</b> 3.9 tai uudempi Tkinterin kanssa (Windows: python.org tai <code>winget</code>; Linux: järjestelmän paketit).</li>
+<li><b>Kirjastot</b>: numpy, scipy, matplotlib ja astropy (pakolliset), pyrtlsdr (RTL-SDR-tikku; Windowsissa <code>pyrtlsdr[lib]</code>), pyserial (rele), pywin32 (ASCOM, Windows). Linuxissa lisäksi järjestelmän <code>rtl-sdr</code>-paketti.</li>
+<li><b>RTL-SDR-tikku</b>: Windowsissa WinUSB-ajuri Zadigilla; Linuxissa DVB-TV-ajurin esto ja udev-sääntö, jotta tikku toimii ilman pääkäyttäjää.</li>
+<li><b>Tarkistus</b>: <code>h1_hunter_sdr.py --check</code> – viimeisen rivin pitää olla <code>RESULT: OK</code>.</li>
+<li><b>Käynnistys</b>: työpöydän tai valikon kuvake. Ilman tikkua valitse Device: <i>Simulator (no hardware)</i>.</li>
+</ol>
+<p class="muted">Ohjelma tallentaa asetuksensa omaan kansioonsa (kotikansiossa). Poisto: poista ohjelmakansio. Mittaukset (Dokumentit/H1-HUNTER SDR) säilyvät.</p>
+
+<h2 id="fi-hw">2. Laitteisto</h2>
+<ul>
+<li><b>Antenni</b>: lautanen tai torvi + syöttö 1420 MHz:lle. Lautasen halkaisija annetaan ohjelmalle (keilan leveys ja spillover lasketaan siitä).</li>
+<li><b>LNA</b> (vahvistin) mahdollisimman lähelle syöttöä, ja vetyviivan kaistanpäästösuodin. Ilman LNA:ta signaali on hyvin heikko.</li>
+<li><b>RTL-SDR</b>-tikku. TCXO-tikuilla (RTL-SDR Blog V3/V4) PPM = 0.</li>
+<li><b>Bias-T</b> syöttää LNA:lle virran koaksiaalia pitkin. Pidä sama asetus Coldissa, Hotissa ja mittauksessa.</li>
+<li>Valinnaiset: USB-rele referenssikuormalle (LCUS-1 / CH340), GOTO-jalusta (ASCOM Windowsissa, INDI Linuxissa), GPS-synkronoitu kello interferometriaa varten.</li>
+</ul>
+
+<h2 id="fi-quick">3. Pikaohje</h2>
+<ol>
+<li><b>Receiver</b>: valitse Device ja käynnistä vastaanotin. Säädä Gain niin, ettei ADC ylikuormitu (Clipping 0). Aseta Bias-T, jos käytät LNA:ta.</li>
+<li><b>Settings</b>: tarkista paikka (leveys, pituus, korkeus) ja lautasen halkaisija.</li>
+<li><b>Observe</b>: anna atsimuutti ja korkeus (Drift) tai yhdistä jalusta (Guided).</li>
+<li>Osoita tyhjälle taivaalle kaukana Linnunradasta ja paina <b>1. Cold</b>.</li>
+<li>Osoita maahan tai peitä antenni absorberilla ja paina <b>2. Hot</b>.</li>
+<li>Osoita kohteeseen ja paina <b>3. Measure</b>. Jokainen valmis keskiarvo tallentuu ja lisätään karttoihin. Lopeta punaisella Stop-napilla.</li>
+<li>Katso tulokset <b>Maps</b>-sivulta ja tee <b>Science package</b> (Data &amp; Export).</li>
+</ol>
+
+<h2 id="fi-rx">4. Sivu 1 Receiver</h2>
+<table>
+<tr><th>Asetus</th><th>Selitys</th></tr>
+<tr><td>Center MHz, H1</td><td>Viritystaajuus. H1-nappi palauttaa 1420,405752 MHz.</td></tr>
+<tr><td>Sample rate MS/s</td><td>Kaistanleveys. Suurempi = leveämpi kaista ja raskaampi laskenta.</td></tr>
+<tr><td>Gain dB</td><td>Liukusäädin hyppää tikun todellisiin vahvistusportaisiin. AGC on aina pois.</td></tr>
+<tr><td>LO offset kHz</td><td>Siirtää tikun DC-piikin pois vetyviivan kohdalta. Keskiarvoistettu viiva pysyy keskellä.</td></tr>
+<tr><td>Bias-T, Offset tuning, Remove DC, DC notch</td><td>LNA:n virta; DC-piikin käsittely. Offset tuning sisältää DC-poiston, notchia ei tarvita.</td></tr>
+<tr><td>Signal</td><td>Kohinataso, huippu, niiden ero ja ADC-taso.</td></tr>
+<tr><td>GPS synchronized clock</td><td>Merkitään metatietoihin; raaka-IQ:sta tulee silloin interferometriaan kelpaava asemapaketti.</td></tr>
+<tr><td>PPM correction, PPM test</td><td>Kiteen taajuusvirhe (1 ppm ≈ 0,3 km/s). PPM test vertaa tikkua PC:n kelloon ja näyttää arvon, mutta ei aseta sitä.</td></tr>
+<tr><td>Flag limit sigma</td><td>Häiriöliputuksen raja (oletus 5). Liputus vain merkitsee spektrit, raakadataa ei muuteta.</td></tr>
+</table>
+<p>Oikealla on RF-spektri ja vesiputous (kiinteä FFT 16384). Alarivillä: Sample throughput (pitää olla lähellä 100 %), Clipping ja liputetut 60 s ajalta.</p>
+
+<h2 id="fi-obs">5. Sivu 2 Observe</h2>
+<h3>Pointing</h3>
+<ul>
+<li><b>Drift (fixed)</b>: antenni on paikallaan, taivas kulkee keilan läpi. Anna Azimuth ja Altitude.</li>
+<li><b>Guided (ASCOM / INDI)</b>: suunta luetaan jalustalta (<a href="#fi-mount">kohta 12</a>).</li>
+<li><b>Dish diameter</b> → Beam (keilan leveys). <b>Beam efficiency (optional)</b>: jätä tyhjäksi. Linnunradan vety täyttää koko keilan, joten T_B = T_line (kerroin 1,0). Tämä on tarkistettu LAB-kartoitukseen samalla keilalla (5.11.2026). Kenttään kuuluu vain arvo, joka on mitattu vertaamalla omaa T_line-tulosta kartoitukseen (LAB / HI4PI) ohjelman laskemalla keilalla.</li>
+<li><b>Now</b>: nykyinen RA/Dec ja galaktiset koordinaatit l, b.</li>
+</ul>
+<h3>Averaging</h3>
+<ul>
+<li><b>FFT resolution</b> (oletus 512) ja <b>Window</b> (Hann). Kanavan leveys = näytteenottotaajuus / FFT.</li>
+<li><b>Dynamic averaging</b>: spektrien määrä yhdessä keskiarvossa (oletus 1 050 000, n. 2 min 2,4 MS/s:lla). Sama määrä käytetään Coldissa, Hotissa ja jokaisessa mittauspisteessä.</li>
+<li><b>Intermediate average</b>: montako spektriä näytön päivitysten välillä (enintään yksi päivitys sekunnissa).</li>
+<li><b>Reset average</b> aloittaa keskiarvon alusta; <b>Save spectrum now</b> tallentaa heti.</li>
+</ul>
+<p>Oikealla pienet näkymät: polaarikartta ja <b>Radiometer check</b> (mitattu kohina vs. odotettu 1/√N). Ennen Coldia tarkistus lasketaan raakaspektristä, jossa on mukana kaistan muoto, joten lukema on silloin vain suuntaa-antava (harmaa teksti); luotettava vertailu saadaan Coldin jälkeen. Napsauta pientä näkymää, niin se vaihtuu keskelle.</p>
+
+<h2 id="fi-cal">6. Kalibrointi: Cold → Hot → Measure</h2>
+<h3>1. Cold - tyhjä taivas</h3>
+<p>Osoita tyhjälle taivaalle korkealle galaktiselle leveydelle. Ohjelma kysyy varmistuksen, jos |b| &lt; 20° tai korkeus &lt; 20°. Cold-viesti on keltainen, jos korkeus &lt; 45° tai |b| &lt; 30° (toimii, mutta ei ole paras paikka). Coldin taivaan lämpötila lasketaan mallista: CMB + Galaksi + ilmakehä + spillover (spillover lasketaan automaattisesti korkeudesta ja lautasen koosta).</p>
+<h3>2. Hot - maa tai absorberi</h3>
+<p>Osoita maahan tai peitä antenni absorberilla. Hot-kuorman lämpötila = ilman lämpötila (Air temperature °C; tyhjä = lämpötila-anturi, jos käytössä, muuten arvio). Ohjelma laskee Y-kertoimen ja järjestelmän kohinalämpötilan:</p>
+<p><code>Tsys = (T_hot − Y·T_cold) / (Y − 1)</code> ja mittauksessa <code>T_ant = (Tsys + T_cold)·P/P_cold − Tsys</code></p>
+<h3>3. Measure</h3>
+<p>Mittaa, kunnes painat Stop. Jokainen valmis keskiarvo tallennetaan ja lisätään karttoihin. Ilman Hotia tulos on suhde Coldiin (ei kelvinejä); ohjelma kysyy varmistuksen.</p>
+<div class="tip">
+<b>Tärkeää</b><br>
+• Cold ja Hot pitää tehdä samoilla vastaanotinasetuksilla kuin mittaus (gain, Bias-T, FFT, näytteenottotaajuus). Muuten ohjelma pyytää tekemään ne uudelleen.<br>
+• Cold vanhenee: yli 60 min vanhasta ohjelma kysyy varmistuksen, koska vahvistus muuttuu lämpötilan mukana.<br>
+• ADC-ylikuormitus hylkää Coldin tai Hotin: laske gainia.<br>
+• <b>Reset calibration</b> tyhjentää Coldin ja Hotin; tallennetut kalibrointitiedostot säilyvät.
+</div>
+<h3>Ruksit kalibroinnin alla</h3>
+<table>
+<tr><th>Ruksi</th><th>Mitä tekee</th></tr>
+<tr><td>Gain drift correction (line-free channels)</td><td>Vain mittauksessa. Skaalaa viivattomat kanavat Coldin tasolle (mediaani viivaikkunan ulkopuolelta). Poistaa vahvistuksen ryöminnän aiheuttaman tason siirtymän, mutta ei kallistusta. Poistaa myös jatkumon muutokset. Raakateho tallentuu korjaamattomana; korjauskerroin kirjataan metatietoihin.</td></tr>
+<tr><td>Smooth Cold reference (bandpass only)</td><td>Käyttää Coldin sijaan sen tasoitettua kaistanmuotoa: ensin kapeat piikit (≤ 3 kanavaa) interpoloidaan yli, sitten liukuva mediaani 25 kHz ja Savitzky-Golay 60 kHz. Vähentää Coldin kohinaa mittauksessa, <b>jos</b> kaistassa ei ole hienoa pysyvää rakennetta. Jos on, tasoitus jättää sen tulokseen ja kohina kasvaa: tarkista Radiometer checkistä, kumpi on parempi omalla laitteistollasi (tekijän RTL-SDR:llä tasoittamaton Cold oli parempi). Cold tallentuu aina tasoittamattomana. <b>Jos vaihdat ruksia Hotin jälkeen, tee Hot uudelleen</b> (ohjelma muistuttaa).</td></tr>
+</table>
+
+<h2 id="fi-view">7. Vetyviivanäkymä</h2>
+<table>
+<tr><th>Säädin</th><th>Selitys</th></tr>
+<tr><td>Show</td><td>Antenna temperature (K), Line temperature (K) (peruslinja vähennetty, kohinalattia 0 K), Ratio to Cold, Raw power, Line brightness T_B (K). Oletus on Line temperature, kuten ammattiohjelmissa; ennen Hotia ohjelma näyttää automaattisesti Ratio to Cold ja ennen Coldia Raw power. Valinta tallentuu asetuksiin.</td></tr>
+<tr><td>X axis</td><td>Frequency (MHz), Velocity topocentric, Velocity LSR (km/s, radiomääritelmä).</td></tr>
+<tr><td>Autoscale, Zoom, Level, Y scale</td><td>Pystyakselin skaalaus; Y scale: Linear tai dB.</td></tr>
+<tr><td>Smoothing bins</td><td>Näytön tasoitus kanavina (tyhjä = ei tasoitusta).</td></tr>
+<tr><td>Line ± MHz</td><td>Viivaikkunan puolileveys (auto = laskettu). Peruslinja sovitetaan tämän ikkunan ulkopuolelta.</td></tr>
+<tr><td>Remove flagged / Restore flagged</td><td>Katso <a href="#fi-rfi">kohta 8</a>.</td></tr>
+<tr><td>Reset view</td><td>Palauttaa zoomin ja tason.</td></tr>
+<tr><td>Info text</td><td>Näyttää kuvassa spektrien määrän, poistetut spektrit ja kanavat, huippulämpötilat, integraalin ja koordinaatit. Julkaistaviin kuviin kannattaa pitää päällä.</td></tr>
+<tr><td>Hold last average</td><td>Oletuksena pois: viiva päivittyy jatkuvasti. Päällä: viimeisin valmis keskiarvo jää näkyviin, kunnes uudessa on 25 % spektreistä.</td></tr>
+<tr><td>Save image</td><td>Tallentaa keskimmäisen näkymän PNG-kuvaksi.</td></tr>
+</table>
+<p>Alarivin lukemat: Peak T_L, Line K·MHz (viivan integraali), Peak V_LSR, Noise σ, Baseline, Saved (tallennetut pisteet), Flagged (liputettujen spektrien osuus). Harmaa katkoviiva = sovitettu peruslinja, punainen pisteviiva = H1-lepotaajuus.</p>
+
+<h2 id="fi-rfi">8. Häiriöt ja Remove flagged</h2>
+<p>Ohjelma <b>liputtaa</b> häiriöiset spektrit (Flag limit sigma) mutta ei koskaan muuta raakadataa. <b>Remove flagged</b> laskee näytettävän ja tallennettavan keskiarvon ilman liputettuja spektrejä ja poistaa lisäksi kapeat häiriökanavat. <b>Restore flagged</b> peruu. Napin tekstissä näkyy esim. <code>(0.3 % + 5 ch)</code> = poistettujen spektrien osuus + kanavien määrä.</p>
+<ul>
+<li>Remove flagged käsittelee Coldin ja Hotin samalla tavalla kuin mittaukset, joten käsittely kumoutuu kalibroinnissa. Kun sen kytkee päälle tai pois, Y ja Tsys lasketaan uudelleen tallessa olevista Cold- ja Hot-keskiarvoista. Sen voi pitää päällä koko ajan.</li>
+<li>Poistettujen kanavien kohdalla näyttö interpoloi viivan yli (vain näytössä). Tiedostossa kanavat on merkitty sarakkeeseen <code>rfi_removed</code>, ja ne jätetään pois peruslinjan sovituksesta. Viivan integraalissa ne korvataan naapurikanavien välisellä interpoloinnilla (ei jätetä pois summasta).</li>
+</ul>
+<h3>RFI-suodatin (Settings → RFI filter)</h3>
+<table>
+<tr><th>Tila</th><th>Levein poistettava piikki</th><th>Raja</th></tr>
+<tr><td>Conservative</td><td>1 kanava</td><td>8 σ</td></tr>
+<tr><td>Normal (oletus, suositus)</td><td>3 km/s</td><td>6 σ</td></tr>
+<tr><td>Aggressive</td><td>5 km/s</td><td>5 σ</td></tr>
+<tr><td>Custom</td><td>liukusäädin 1-5 km/s</td><td>6 σ</td></tr>
+</table>
+<p>Automaattinen haku ei koskaan poista yli 3 kanavan levyistä aluetta (vierekkäinen ylös/alas-pari sallitaan). Vetyviiva on paljon leveämpi, joten sitä ei poisteta. Aggressive voi poistaa hyvin kapeita todellisia rakenteita.</p>
+<h3>Excluded ranges (MHz)</h3>
+<p>Omat kiinteät poistoalueet vastaanottimen omille piikeille, esim. <code>1419.58-1419.72, 1420.78-1420.82</code> (myös desimaalipilkku käy). Tyhjä = ei mitään. Käytetään vain, kun Remove flagged on päällä. Alueet kirjataan metatietoihin. Jos alue osuu viivaikkunaan, kentän alla näkyy oranssi huomautus. <b>Älä laita aluetta vetyviivan päälle.</b></p>
+
+<h3>Spectral kurtosis flagging (Settings → RFI filter)</h3>
+<p>Oletuksena pois. Tutkii jokaisen kanavan erikseen noin 0,1 s:n lohkoissa (1024 spektriä), onko signaali Gaussista kohinaa (SK ≈ 1) vai pulssimaista tai vaihtelevaa häiriötä, ja poistaa vain häiriöiset kanava-lohkot. Vetyviiva on Gaussista kohinaa, joten sitä ei liputeta. Rajat 0,836-1,214 vastaavat 0,135 %:n virhehälytystä kummallakin puolella, joten puhtaastakin datasta poistuu noin 0,3 % tasaisesti kaikista kanavista. Tasaisia kantoaaltoja SK ei tunnista; ne poistaa kapeiden piikkien haku. Kanava, josta poistuu yli puolet datasta, jätetään kokonaan pois kuten häiriökanavat. Vaikuttaa vain, kun Remove flagged on päällä, ja alkaa seuraavasta keskiarvosta. Tiedostoon tallentuu sarake <code>spectra_used</code> (spektrien määrä kanavittain), ja <code>_flagged.csv</code>:hen poistetut summat, joten poiston voi toistaa.</p>
+
+<h2 id="fi-maps">9. Sivu 3 Maps</h2>
+<ul>
+<li><b>Viivan voimakkuus</b>: RA / Dec, Galactic (Aitoff), Polar map.</li>
+<li><b>Nopeuskartat (LSR)</b>: Channel map, Moment 0 (intensiteetti), Moment 1 (nopeus), l-v diagram, Spectra by l, Milky Way top view, Rotation curve, Enclosed mass.</li>
+<li><b>Limits</b>: V1/V2 = kanava- ja momenttikarttojen nopeusväli; b window = l-v-kaavion, ylänäkymän ja pyörimiskäyrän leveysväli; Colormap; Sky = Galactic / Equatorial.</li>
+<li><b>Text and coordinates</b>: piilottaa tekstit ja koordinaatit kaikista kartoista (esim. esityskuviin). Polaarikartassa sama valinta ohjaa myös RA/Dec-ruudukkoa ja asteikkoa; tieteelliseen pakettiin polar_map.png tehdään tämän valinnan mukaan.</li>
+<li>Napsauta karttapistettä: sen spektri avautuu oikealle.</li>
+<li>Napsauta spektriä hiiren oikealla: <b>Save spectrum (image + CSV)</b> tallentaa kuvan ja CSV-taulukon. Niissä on sijainti, alue (solut, joiden spektrit on keskiarvoistettu), spektrien määrä ja aikaväli sekä jokaisen mukana olevan kalibroinnin Cold, Hot, Y ja Tsys. Molemmat menevät tieteelliseen pakettiin (images/saved ja maps/saved).</li>
+</ul>
+
+<h2 id="fi-data">10. Sivu 4 Data &amp; Export</h2>
+<table>
+<tr><th>Tiedosto</th><th>Sisältö</th></tr>
+<tr><td><code>H1_0001.csv …</code></td><td>Jokainen mittauspiste: taajuus, nopeudet, power_raw, (power_used), ratio_to_cold, T_ant, T_line, T_B, trusted, rfi_removed + otsake, jossa kaikki asetukset ja korjaukset.</td></tr>
+<tr><td><code>H1_0001_flagged.csv</code></td><td>Kaikkien spektrien summa ja liputetut spektrit erikseen: poiston voi toistaa itse.</td></tr>
+<tr><td><code>H1_0001_counts.csv</code></td><td>Keskiarvon spektrikohtainen loki häiriöanalyysiin.</td></tr>
+<tr><td><code>H1_log_YYYYMMDD.csv</code></td><td>Yksi rivi per piste: aika, RA/Dec, l/b, voimakkuus, liputukset.</td></tr>
+<tr><td><code>H1_cold_… / H1_hot_… / H1_calibrations.json</code></td><td>Kalibroinnit.</td></tr>
+</table>
+<ul>
+<li><b>Raw IQ</b> (oletus pois): ainoa binääritiedosto, SigMF-muodossa, tallentuu Coldin, Hotin ja Measuren aikana, kukin omaan kansioonsa (2 tavua per näyte, n. 290 MB minuutissa 2,4 MS/s:lla). Tiedosto iq_blocks.csv kertoo jokaisen lohkon ajan ja merkitsee kohdat, joista näytteitä puuttuu. GPS-kellon kanssa siitä tulee asemapaketti interferometriaan.</li>
+<li><b>Science package</b>: kaikki yhteen kansioon (README, summary, spektrit, kartat, kuvat, kalibroinnit, asetukset), analysoitavissa ilman tätä ohjelmaa. Valinnaisesti FITS-kuutio ja ezRA-datatiedosto.</li>
+<li><b>Open and import</b>: avaa science package ja jatka, tuo CSV-spektrejä tai H1-Hunter v1:n .npz-dataa. Kalibroinnit pitää tehdä uudelleen ennen mittausta. Seuraavaan tieteelliseen pakettiin avattu data kopioidaan muuttamattomana omaan alikansioonsa: avatun paketin keskiarvot, kalibroinnit, metadata.json ja summary.txt kansioon <code>imported/&lt;paketin nimi&gt;</code> ja yksittäin tuodut spektritiedostot kansioon <code>imported/files</code>. Avatun paketin oma imported-kansio siirtyy mukaan, joten koko historia säilyy. Uuden paketin <code>spectra/averages</code> sisältää vain tämän kerran mittaukset; spektritaulukoissa ja kartoissa on kaikki data.</li>
+<li>Oletuskansio: <code>Documents/H1-HUNTER SDR/data</code>.</li>
+</ul>
+
+<h2 id="fi-set">11. Sivu 5 Settings</h2>
+<ul>
+<li><b>Site</b>: aseman nimi, havaitsija, leveys, pituus, korkeus, ilman lämpötila; esiasetukset (Preset).</li>
+<li><b>Antenna</b>: lautasen halkaisija. Spillover lasketaan automaattisesti.</li>
+<li><b>RFI filter</b>: ks. <a href="#fi-rfi">kohta 8</a>.</li>
+<li><b>Reference load (relay)</b>: USB-rele kytkee LNA:n tuloon vastuksen (Dicke-tyyppinen referenssi). <b>Suositeltu kytkentä:</b> Nooelec SAWbird+ H1 Barebones -LNA, jossa on valmiina RF-kytkin 50 Ω:n referenssivastukseen. Kotelollisessa SAWbird+ H1:ssä kytkintä ei ole. Kytke LCUS-1-tyyppisen USB-releen koskettimet COM ja NO LNA:n 4-pinnisen liittimen pinneihin 3 ja 4: rele sulkeutuu referenssin ajaksi ja oikosulkee pinnit, jolloin LNA:n tulo vaihtuu antennista vastukseen (sama kytkentä kuin ezRA:ssa). Pidä johdot lyhyinä, koska pitkät johdot voivat tuoda häiriöitä. Kytkimen vaimennus nostaa kohinalukua hieman verrattuna kytkimettömään LNA:han. Referenssi otetaan Coldin jälkeen ja sitten joka N:n mittauksen välein; vahvistuksen ryömintä poistetaan. Linuxissa portti on <code>/dev/ttyUSB0</code> (kirjaudu ulos ja sisään kerran asennuksen jälkeen).</li>
+<li><b>Temperature sensor</b> (valinnainen): täyttää Air temperature -kentän (Hot-kuorman lämpötila), kun kenttä on tyhjä; itse kirjoitettu arvo menee aina edelle. Lähteet: DS18B20 Raspberry Pi:n 1-Wire-väylässä (GPIO 4, <code>dtoverlay=w1-gpio</code>), USB-sarjaporttilaite, joka tulostaa lämpötilan °C tekstiriveinä (esim. Arduino + DS18B20, 9600 baud), tai ASCOM-sääasema/fokusoija (Windows) / INDI-sääasema/fokusoija (Linux). <b>Detect</b> etsii DS18B20:n ja sarjaportit (releportti ohitetaan); ASCOM/INDI valitaan Connect-napilla. Yli 5 min vanhaa arvoa ei käytetä. Lähde kirjataan metatietoihin. Tarkimman tuloksen saa silti mittaamalla absorberin lämpötilan itse.</li>
+<li><b>Asemapaketit</b>: kun Receiver → GPS synchronized clock on valittuna, raaka-IQ-tallennuksesta tulee asemapaketti (<code>station.json</code> + <code>iq.sigmf-data</code>, tiedepaketissa kansio <code>station_packet</code>). Pakettien korrelointi tehdään erillisellä ohjelmalla H1-HUNTER INTERFEROMETER; H1-HUNTER SDR ei korreloi. <b>Ajoitus:</b> ohjelma käyttää tietokoneen kelloa eikä lue GPS:ää suoraan. Jokaisen aseman kello pitää tahdistaa GPS:ään: GNSS-vastaanotin, jossa on PPS-lähtö (esim. u-blox M8/M9), Linuxilla ja Raspberryllä gpsd + chrony (Raspberryllä PPS GPIO-pinniin), Windowsilla GPS-aikaohjelma. Hapsuhaku olettaa kellojen täsmäävän ±10 ms:n sisällä; pelkkä USB-GPS ilman PPS:ää (tyypillisesti 10-50 ms) ei riitä.</li>
+<li><b>Program</b>: About, <b>User manual</b> (tämä ohje), Raspberryllä Shut down. Asetukset tallentuvat tiedostoon <code>h1_hunter_sdr_settings.json</code>.</li>
+</ul>
+
+<h2 id="fi-mount">12. Jalusta (Guided)</h2>
+<ul>
+<li><b>Windows / ASCOM</b>: Observe → Pointing → Guided (ASCOM) → Connect to mount… ja valitse ajuri.</li>
+<li><b>Linux / INDI</b>: käynnistä KStars → Ekos ja yhdistä jalusta (esim. EQMod). Sitten Guided (INDI) → Connect to mount… (localhost:7624).</li>
+<li>Ohjelma vain <b>lukee</b> suunnan (RA/Dec); jalustaa ohjataan omalla ohjelmallaan. Kääntämisen aikana keskiarvo aloitetaan alusta, joten liikkeen aikana otettuja spektrejä ei käytetä.</li>
+<li>Toimii myös Alt-Az-GOTO-jalustoilla, kunhan ajuri antaa RA/Dec:n.</li>
+</ul>
+
+<h2 id="fi-sci">13. Tieteellinen käyttö</h2>
+<p>Ohjelma sopii harrastaja- ja opetuskäyttöön: pyörimiskäyrä, l-v-kartat, drift scan -kartoitukset ja vertailu LAB- tai HI4PI-kartoitukseen.</p>
+<ul>
+<li>Raakadata säilyy aina; kaikki korjaukset (poistetut spektrit ja kanavat, Cold-tasoitus, drift-korjaus, poistoalueet) kirjataan metatietoihin, joten käsittelyn voi toistaa.</li>
+<li>Absoluuttinen lämpötila on likimääräinen (n. 10-20 %), koska ilman lämpötila ja spillover ovat arvioita. Viivan muoto ja nopeudet ovat paljon tarkempia.</li>
+<li>Hajasäteilyä (stray radiation) ei korjata. Pienen lautasen keila on leveä (0,9 m ≈ 16°).</li>
+<li>Käytä Normal-RFI-tilaa, pidä Coldin ja mittauksen asetukset samoina, ota uusi Cold säännöllisesti ja pidä Info text päällä julkaistavissa kuvissa (näytön interpolointi on vain kosmeettinen).</li>
+</ul>
+
+<h2 id="fi-trouble">14. Vianetsintä</h2>
+<table>
+<tr><th>Oire</th><th>Syy / korjaus</th></tr>
+<tr><td>ADC OVERLOAD, Cold tai Hot hylätään</td><td>Gain liian suuri. Laske gainia ja tee Cold ja Hot uudelleen.</td></tr>
+<tr><td>Ohjelma sulkeutuu odottamatta</td><td>Syy tallentuu tiedostoon <code>Documents/H1-HUNTER SDR/crash_log.txt</code> (myös kaatumiset vastaanotinkirjaston sisällä, esim. kun USB-tikku irtoaa). Lähetä tiedosto tukeen. Tarkista USB-liitos.</td></tr>
+<tr><td>Raw IQ -tallenteissa aukkoja, kone hidas tallennuksen aikana</td><td>Hidas kiintolevy tai tiedostojen hakuindeksoija (esim. KDE:n Baloo) lukee samaan aikaan suuria IQ-tiedostoja. Sulje datakansio indeksoinnin ulkopuolelle (KDE: System Settings → Search → File Search) tai keskeytä indeksointi (<code>balooctl6 suspend</code>).</td></tr>
+<tr><td>Sample throughput selvästi alle 100 %</td><td>Kone ei ehdi. Pienennä näytteenottotaajuutta tai FFT:tä, ota FFT overlap pois, sulje muut ohjelmat.</td></tr>
+<tr><td>T_ant negatiivinen</td><td>Cold on otettu kohdasta, jossa oli häiriötä, maata tai vetyä. Ota uusi Cold korkealta tyhjältä taivaalta ja tarkista häiriölähteet (esim. virtalähteet antennin lähellä).</td></tr>
+<tr><td>Taso siirtyy tai kallistuu ajan myötä</td><td>Vahvistus ryömii lämpötilan mukana. Ota uusi Cold, käytä Gain drift correctionia tai referenssirelettä.</td></tr>
+<tr><td>Kapeita piikkejä aina samoissa kohdissa</td><td>Vastaanottimen omia piikkejä. Remove flagged + Normal poistaa kapeat; leveämmät Excluded ranges -kentällä.</td></tr>
+<tr><td>Hot: "not clearly above Cold"</td><td>Hot ei ole tarpeeksi lämmin: tarkista suuntaus, absorberi ja gain.</td></tr>
+<tr><td>Tikku ei näy (Linux)</td><td>Irrota ja kiinnitä tikku uudelleen asennuksen jälkeen; käynnistä kone uudelleen.</td></tr>
+<tr><td>Tikku ei näy (Windows)</td><td>Asenna WinUSB-ajuri Zadigilla.</td></tr>
+</table>
+</div>
+
+<!-- ======================================================================= ENGLISH -->
+<div data-lang="en">
+<p><b>User manual.</b> H1-HUNTER SDR is an RTL-SDR receiver, hydrogen line observatory (21 cm, 1420.405752 MHz) and sky mapper in one program. The program never uses the network. All saved files are text (CSV, JSON, TXT) or PNG images; the only binary files are the optional raw IQ recording and the optional FITS cube.</p>
+
+<nav class="toc"><b>Contents</b><ol>
+<li><a href="#en-install">Installation</a></li>
+<li><a href="#en-hw">Hardware</a></li>
+<li><a href="#en-quick">Quick start</a></li>
+<li><a href="#en-rx">1 Receiver</a></li>
+<li><a href="#en-obs">2 Observe</a></li>
+<li><a href="#en-cal">Calibration</a></li>
+<li><a href="#en-view">Hydrogen line view</a></li>
+<li><a href="#en-rfi">Interference and Remove flagged</a></li>
+<li><a href="#en-maps">3 Maps</a></li>
+<li><a href="#en-data">4 Data &amp; Export</a></li>
+<li><a href="#en-set">5 Settings</a></li>
+<li><a href="#en-mount">Mount (ASCOM / INDI)</a></li>
+<li><a href="#en-sci">Scientific use</a></li>
+<li><a href="#en-trouble">Troubleshooting</a></li>
+</ol></nav>
+
+<div class="tip"><b>FIRST LIGHT - 1-minute summary</b>
+<ol>
+<li>Start the receiver (Start receiver).</li>
+<li>Point at empty sky far from the Milky Way and press <b>1. Cold</b>.</li>
+<li>Point at the ground or cover the feed with an absorber and press <b>2. Hot</b>.</li>
+<li>Point at the Milky Way.</li>
+<li>Press <b>3. Measure</b>.</li>
+<li>Open <b>Maps</b>.</li>
+</ol></div>
+
+<h2 id="en-install">1. Installation</h2>
+<p>The program is started with Python; there is no installer. Step-by-step instructions for each operating system are in the <b>INSTALL</b> section of the package's <code>README.txt</code> (on GitHub: README, section Installation). Every command block can be copied and pasted as it is into the Command Prompt or terminal. In short:</p>
+<ol>
+<li><b>Python</b> 3.9 or newer with Tkinter (Windows: python.org or <code>winget</code>; Linux: the system packages).</li>
+<li><b>Libraries</b>: numpy, scipy, matplotlib and astropy (required), pyrtlsdr (RTL-SDR stick; on Windows <code>pyrtlsdr[lib]</code>), pyserial (relay), pywin32 (ASCOM, Windows). On Linux also the system package <code>rtl-sdr</code>.</li>
+<li><b>RTL-SDR stick</b>: on Windows the WinUSB driver with Zadig; on Linux the DVB-TV driver blocked and a udev rule, so the stick works without root.</li>
+<li><b>Check</b>: <code>h1_hunter_sdr.py --check</code> – the last line must be <code>RESULT: OK</code>.</li>
+<li><b>Start</b>: the Desktop or menu icon. Without a stick choose Device: <i>Simulator (no hardware)</i>.</li>
+</ol>
+<p class="muted">The program saves its settings in its own folder (in your home folder). Uninstall: delete the program folder. Your measurements (Documents/H1-HUNTER SDR) are kept.</p>
+
+<h2 id="en-hw">2. Hardware</h2>
+<ul>
+<li><b>Antenna</b>: dish or horn with a 1420 MHz feed. The dish diameter is given to the program (beam width and spillover are computed from it).</li>
+<li><b>LNA</b> as close to the feed as possible, and a hydrogen line band-pass filter. Without an LNA the signal is very weak.</li>
+<li><b>RTL-SDR</b> stick. With TCXO sticks (RTL-SDR Blog V3/V4) PPM = 0.</li>
+<li><b>Bias-T</b> powers the LNA through the coax. Keep the same setting in Cold, Hot and the measurement.</li>
+<li>Optional: USB relay for a reference load (LCUS-1 / CH340), GOTO mount (ASCOM on Windows, INDI on Linux), GPS synchronized clock for interferometry.</li>
+</ul>
+
+<h2 id="en-quick">3. Quick start</h2>
+<ol>
+<li><b>Receiver</b>: choose the Device and start the receiver. Set the Gain so that the ADC is not overloaded (Clipping 0). Tick Bias-T if you use an LNA.</li>
+<li><b>Settings</b>: check the site (latitude, longitude, elevation) and the dish diameter.</li>
+<li><b>Observe</b>: enter azimuth and altitude (Drift) or connect the mount (Guided).</li>
+<li>Point at empty sky far from the Milky Way and press <b>1. Cold</b>.</li>
+<li>Point at the ground or cover the antenna with an absorber and press <b>2. Hot</b>.</li>
+<li>Point at the target and press <b>3. Measure</b>. Every finished average is saved and added to the maps. Stop with the red Stop button.</li>
+<li>See the results on the <b>Maps</b> page and make a <b>Science package</b> (Data &amp; Export).</li>
+</ol>
+
+<h2 id="en-rx">4. Page 1 Receiver</h2>
+<table>
+<tr><th>Setting</th><th>Meaning</th></tr>
+<tr><td>Center MHz, H1</td><td>Tuning frequency. The H1 button restores 1420.405752 MHz.</td></tr>
+<tr><td>Sample rate MS/s</td><td>Bandwidth. Higher = wider band and heavier processing.</td></tr>
+<tr><td>Gain dB</td><td>The slider snaps to the stick's real gain steps. AGC is always off.</td></tr>
+<tr><td>LO offset kHz</td><td>Moves the stick's DC spike away from the hydrogen line. The averaged line stays in the middle.</td></tr>
+<tr><td>Bias-T, Offset tuning, Remove DC, DC notch</td><td>LNA power; handling of the DC spike. Offset tuning includes DC removal and needs no notch.</td></tr>
+<tr><td>Signal</td><td>Noise floor, peak, their difference and the ADC level.</td></tr>
+<tr><td>GPS synchronized clock</td><td>Written in the metadata; the raw IQ recording then becomes an interferometry-ready station packet.</td></tr>
+<tr><td>PPM correction, PPM test</td><td>Crystal frequency error (1 ppm ≈ 0.3 km/s). PPM test compares the stick with the PC clock and shows the value, but never sets it.</td></tr>
+<tr><td>Flag limit sigma</td><td>Interference flagging limit (default 5). Flagging only marks spectra; raw data is never changed.</td></tr>
+</table>
+<p>On the right: RF spectrum and waterfall (fixed FFT 16384). Bottom row: Sample throughput (should be near 100 %), Clipping and flagged spectra in the last 60 s.</p>
+
+<h2 id="en-obs">5. Page 2 Observe</h2>
+<h3>Pointing</h3>
+<ul>
+<li><b>Drift (fixed)</b>: the antenna stays still and the sky drifts through the beam. Enter Azimuth and Altitude.</li>
+<li><b>Guided (ASCOM / INDI)</b>: the pointing is read from the mount (<a href="#en-mount">section 12</a>).</li>
+<li><b>Dish diameter</b> → Beam (beam width). <b>Beam efficiency (optional)</b>: leave it empty. Galactic hydrogen fills the whole beam, so T_B = T_line (factor 1.0), checked against the LAB survey at the same beam (5.11.2026). Only a value measured by comparing your own T_line with a survey (LAB / HI4PI) at the beam the program computes belongs here.</li>
+<li><b>Now</b>: current RA/Dec and Galactic coordinates l, b.</li>
+</ul>
+<h3>Averaging</h3>
+<ul>
+<li><b>FFT resolution</b> (default 512) and <b>Window</b> (Hann). Channel width = sample rate / FFT.</li>
+<li><b>Dynamic averaging</b>: spectra per average (default 1,050,000, about 2 min at 2.4 MS/s). The same number is used for Cold, Hot and every measurement point.</li>
+<li><b>Intermediate average</b>: spectra between screen updates (at most one update per second).</li>
+<li><b>Reset average</b> restarts the average; <b>Save spectrum now</b> saves at once.</li>
+</ul>
+<p>Small views on the right: polar map and <b>Radiometer check</b> (measured noise vs. expected 1/√N). Before Cold the check uses the raw spectrum, which contains the bandpass shape, so the reading is only a guide (grey text); the real comparison starts after Cold. Click a small view to swap it into the centre.</p>
+
+<h2 id="en-cal">6. Calibration: Cold → Hot → Measure</h2>
+<h3>1. Cold - empty sky</h3>
+<p>Point at empty sky at high Galactic latitude. The program asks for confirmation if |b| &lt; 20° or the altitude &lt; 20°. The Cold message is yellow if the altitude &lt; 45° or |b| &lt; 30° (works, but not the best place). The Cold sky temperature comes from a model: CMB + Galaxy + atmosphere + spillover (spillover is computed automatically from the altitude and the dish size).</p>
+<h3>2. Hot - ground or absorber</h3>
+<p>Point at the ground or cover the antenna with an absorber. The hot load temperature = air temperature (Air temperature °C; empty = the temperature sensor if used, otherwise an estimate). The program computes the Y factor and the system noise temperature:</p>
+<p><code>Tsys = (T_hot − Y·T_cold) / (Y − 1)</code> and in the measurement <code>T_ant = (Tsys + T_cold)·P/P_cold − Tsys</code></p>
+<h3>3. Measure</h3>
+<p>Measures until you press Stop. Every finished average is saved and added to the maps. Without Hot the result is a ratio to Cold (not Kelvin); the program asks for confirmation.</p>
+<div class="tip">
+<b>Important</b><br>
+• Cold and Hot must be made with the same receiver settings as the measurement (gain, Bias-T, FFT, sample rate). Otherwise the program asks you to redo them.<br>
+• Cold gets old: over 60 min the program asks for confirmation, because the gain changes with temperature.<br>
+• ADC overload rejects Cold or Hot: lower the gain.<br>
+• <b>Reset calibration</b> clears Cold and Hot; the saved calibration files are kept.
+</div>
+<h3>Check boxes below the calibration</h3>
+<table>
+<tr><th>Box</th><th>What it does</th></tr>
+<tr><td>Gain drift correction (line-free channels)</td><td>Measurement only. Scales the line-free channels back to the Cold level (median outside the line window). Removes a level shift caused by gain drift, but not a tilt. Also removes continuum changes. Raw power is saved uncorrected; the factor is written in the metadata.</td></tr>
+<tr><td>Smooth Cold reference (bandpass only)</td><td>Uses a smoothed bandpass model instead of the Cold spectrum: narrow spikes (≤ 3 channels) are interpolated over first, then a 25 kHz running median and a 60 kHz Savitzky-Golay fit. Reduces the Cold noise in the measurement <b>if</b> the bandpass has no fine stable structure. If it has, the smoothing leaves that structure in the result and the noise grows: check with the Radiometer check which is better on your hardware (on the author's RTL-SDR the unsmoothed Cold was better). Cold is always saved unsmoothed. <b>If you change the box after Hot, press Hot again</b> (the program reminds you).</td></tr>
+</table>
+
+<h2 id="en-view">7. Hydrogen line view</h2>
+<table>
+<tr><th>Control</th><th>Meaning</th></tr>
+<tr><td>Show</td><td>Antenna temperature (K), Line temperature (K) (baseline removed, noise floor at 0 K), Ratio to Cold, Raw power, Line brightness T_B (K). The default is Line temperature, as in professional software; before Hot the program shows Ratio to Cold automatically and before Cold Raw power. The choice is saved in the settings.</td></tr>
+<tr><td>X axis</td><td>Frequency (MHz), Velocity topocentric, Velocity LSR (km/s, radio definition).</td></tr>
+<tr><td>Autoscale, Zoom, Level, Y scale</td><td>Vertical scaling; Y scale: Linear or dB.</td></tr>
+<tr><td>Smoothing bins</td><td>Display smoothing in channels (empty = none).</td></tr>
+<tr><td>Line ± MHz</td><td>Half width of the line window (auto = computed). The baseline is fitted outside this window.</td></tr>
+<tr><td>Remove flagged / Restore flagged</td><td>See <a href="#en-rfi">section 8</a>.</td></tr>
+<tr><td>Reset view</td><td>Restores zoom and level.</td></tr>
+<tr><td>Info text</td><td>Shows in the plot the number of spectra, removed spectra and channels, peak temperatures, the integral and the coordinates. Keep it on for published images.</td></tr>
+<tr><td>Hold last average</td><td>Off by default: the line updates all the time. On: the last finished average stays on screen until the new one has 25 % of its spectra.</td></tr>
+<tr><td>Save image</td><td>Saves the centre view as PNG.</td></tr>
+</table>
+<p>Readouts: Peak T_L, Line K·MHz (line integral), Peak V_LSR, Noise σ, Baseline, Saved (saved points), Flagged (share of flagged spectra). Dashed grey = fitted baseline, red dotted line = H1 rest frequency.</p>
+
+<h2 id="en-rfi">8. Interference and Remove flagged</h2>
+<p>The program <b>flags</b> spectra with interference (Flag limit sigma) but never changes the raw data. <b>Remove flagged</b> recomputes the shown and saved average without the flagged spectra and also removes narrow interference channels. <b>Restore flagged</b> undoes it. The button shows e.g. <code>(0.3 % + 5 ch)</code> = share of removed spectra + number of channels.</p>
+<ul>
+<li>Remove flagged treats Cold and Hot exactly like the measurements, so the treatment cancels in the calibration. Switching it on or off recomputes Y and Tsys from the stored Cold and Hot averages. It can stay on all the time.</li>
+<li>Over removed channels the display interpolates the line (display only). In the file the channels are marked in the <code>rfi_removed</code> column and left out of the baseline fit. In the line integral they are replaced by interpolation between their neighbours (not left out of the sum).</li>
+</ul>
+<h3>RFI filter (Settings → RFI filter)</h3>
+<table>
+<tr><th>Mode</th><th>Widest removed spike</th><th>Limit</th></tr>
+<tr><td>Conservative</td><td>1 channel</td><td>8 σ</td></tr>
+<tr><td>Normal (default, recommended)</td><td>3 km/s</td><td>6 σ</td></tr>
+<tr><td>Aggressive</td><td>5 km/s</td><td>5 σ</td></tr>
+<tr><td>Custom</td><td>slider 1-5 km/s</td><td>6 σ</td></tr>
+</table>
+<p>The automatic search never removes a region wider than 3 channels (an adjacent up/down pair is allowed). The hydrogen line is much wider, so it is not removed. Aggressive may remove very narrow real features.</p>
+<h3>Excluded ranges (MHz)</h3>
+<p>Your own fixed ranges for the receiver's own spurs, e.g. <code>1419.58-1419.72, 1420.78-1420.82</code> (decimal commas work too). Empty = nothing. Used only when Remove flagged is on. The ranges are written in the metadata. If a range is inside the line window, an orange note appears below the field. <b>Do not put a range on the hydrogen line.</b></p>
+
+<h3>Spectral kurtosis flagging (Settings → RFI filter)</h3>
+<p>Off by default. Tests every channel separately in blocks of about 0.1 s (1024 spectra) for Gaussian noise (SK ≈ 1) against pulsed or switching interference, and removes only the affected channel blocks. The hydrogen line is Gaussian noise, so it is not flagged. The bounds 0.836-1.214 correspond to 0.135 % false alarms on each side, so about 0.3 % of even clean data is removed evenly from all channels. Steady carriers are not detected by SK; the narrow spike search removes them. A channel that loses more than half of its data is left out completely, like the RFI channels. Used only when Remove flagged is on, from the next average. The file gets a <code>spectra_used</code> column (spectra per channel) and <code>_flagged.csv</code> the removed sums, so the removal can be repeated.</p>
+
+<h2 id="en-maps">9. Page 3 Maps</h2>
+<ul>
+<li><b>Line strength</b>: RA / Dec, Galactic (Aitoff), Polar map.</li>
+<li><b>Velocity maps (LSR)</b>: Channel map, Moment 0 (intensity), Moment 1 (velocity), l-v diagram, Spectra by l, Milky Way top view, Rotation curve, Enclosed mass.</li>
+<li><b>Limits</b>: V1/V2 = velocity range of the channel and moment maps; b window = latitude range of the l-v diagram, top view and rotation curve; Colormap; Sky = Galactic / Equatorial.</li>
+<li><b>Text and coordinates</b>: hides texts and coordinates in all maps (e.g. for presentation images). In the polar map the same choice also controls the RA/Dec grid and scale; polar_map.png in the science package follows this choice.</li>
+<li>Click a map point: its spectrum opens on the right.</li>
+<li>Right-click the spectrum: <b>Save spectrum (image + CSV)</b> saves an image and a CSV table with the position, the region (the cells whose spectra are averaged), the number of spectra and their time range, and the Cold, Hot, Y and Tsys of every calibration involved. Both go into the science package (images/saved and maps/saved).</li>
+</ul>
+
+<h2 id="en-data">10. Page 4 Data &amp; Export</h2>
+<table>
+<tr><th>File</th><th>Content</th></tr>
+<tr><td><code>H1_0001.csv …</code></td><td>Every measurement point: frequency, velocities, power_raw, (power_used), ratio_to_cold, T_ant, T_line, T_B, trusted, rfi_removed + a header with every setting and correction.</td></tr>
+<tr><td><code>H1_0001_flagged.csv</code></td><td>Sum of all spectra and the flagged spectra separately: you can repeat the removal yourself.</td></tr>
+<tr><td><code>H1_0001_counts.csv</code></td><td>Per-spectrum log of the average for interference analysis.</td></tr>
+<tr><td><code>H1_log_YYYYMMDD.csv</code></td><td>One row per point: time, RA/Dec, l/b, strength, flags.</td></tr>
+<tr><td><code>H1_cold_… / H1_hot_… / H1_calibrations.json</code></td><td>Calibrations.</td></tr>
+</table>
+<ul>
+<li><b>Raw IQ</b> (off by default): the only binary file, SigMF format, recorded during Cold, Hot and Measure, each in its own folder (2 bytes per sample, about 290 MB per minute at 2.4 MS/s). iq_blocks.csv gives the time of every block and marks where samples are missing. With the GPS clock it becomes a station packet for interferometry.</li>
+<li><b>Science package</b>: everything in one folder (README, summary, spectra, maps, images, calibrations, settings) that can be analysed without this program. Optional FITS cube and ezRA data file.</li>
+<li><b>Open and import</b>: open a science package and continue, import CSV spectra or H1-Hunter v1 .npz data. Calibrations must be done again before measuring. In the next science package the opened data is copied unchanged into its own subfolder: the opened package's averages, calibrations, metadata.json and summary.txt into <code>imported/&lt;package name&gt;</code>, and spectrum files imported one by one into <code>imported/files</code>. The opened package's own imported folder is carried over, so the full history is kept. The new package's <code>spectra/averages</code> holds only this session's measurements; the spectra tables and the maps contain all data.</li>
+<li>Default folder: <code>Documents/H1-HUNTER SDR/data</code>.</li>
+</ul>
+
+<h2 id="en-set">11. Page 5 Settings</h2>
+<ul>
+<li><b>Site</b>: station name, observer, latitude, longitude, elevation, air temperature; presets.</li>
+<li><b>Antenna</b>: dish diameter. Spillover is computed automatically.</li>
+<li><b>RFI filter</b>: see <a href="#en-rfi">section 8</a>.</li>
+<li><b>Reference load (relay)</b>: a USB relay switches the LNA input to a resistor (Dicke-type reference). <b>Recommended set-up:</b> the Nooelec SAWbird+ H1 Barebones LNA, which has a built-in RF switch to a 50 Ω reference resistor. The enclosed SAWbird+ H1 has no such switch. Wire the COM and NO contacts of an LCUS-1 type USB relay to pins 3 and 4 of the LNA's 4-pin header: the relay closes for the reference and shorts the pins, which switches the LNA input from the antenna to the resistor (the same wiring as in ezRA). Keep the wires short, as long wires can pick up interference. The switch's loss raises the noise figure slightly compared with an LNA without a switch. A reference is taken after Cold and then every N measurements; the gain drift is removed. On Linux the port is <code>/dev/ttyUSB0</code> (log out and in once after the installation).</li>
+<li><b>Temperature sensor</b> (optional): fills the Air temperature (the Hot load temperature) when that field is empty; a typed value always wins. Sources: a DS18B20 on the Raspberry Pi 1-Wire bus (GPIO 4, <code>dtoverlay=w1-gpio</code>), a USB serial device that prints the temperature in °C as text lines (e.g. Arduino + DS18B20, 9600 baud), or an ASCOM weather station / focuser (Windows) / INDI weather station / focuser (Linux). <b>Detect</b> searches for a DS18B20 and serial ports (the relay port is skipped); ASCOM / INDI devices are chosen with Connect. A value older than 5 min is not used. The source is written in the metadata. Measuring the absorber temperature yourself is still the most accurate.</li>
+<li><b>Station packets</b>: with Receiver → GPS synchronized clock ticked, the raw IQ recording becomes a station packet (<code>station.json</code> + <code>iq.sigmf-data</code>; folder <code>station_packet</code> in the science package). Packets are correlated in the separate program H1-HUNTER INTERFEROMETER; H1-HUNTER SDR does not correlate. <b>Timing:</b> the program uses the computer clock and does not read a GPS receiver directly. Every station's clock must be synchronised to GPS: a GNSS receiver with a PPS output (e.g. u-blox M8/M9), gpsd + chrony on Linux and Raspberry Pi (PPS on a GPIO pin on the Pi), GPS time software on Windows. Fringe search assumes the clocks agree within ±10 ms; a USB GPS without PPS (typically 10-50 ms) is not sufficient.</li>
+<li><b>Program</b>: About, <b>User manual</b> (this manual), on a Raspberry Pi Shut down. Settings are saved in <code>h1_hunter_sdr_settings.json</code>.</li>
+</ul>
+
+<h2 id="en-mount">12. Mount (Guided)</h2>
+<ul>
+<li><b>Windows / ASCOM</b>: Observe → Pointing → Guided (ASCOM) → Connect to mount… and choose the driver.</li>
+<li><b>Linux / INDI</b>: start KStars → Ekos and connect the mount (e.g. EQMod). Then Guided (INDI) → Connect to mount… (localhost:7624).</li>
+<li>The program only <b>reads</b> the pointing (RA/Dec); the mount is controlled by its own program. While the mount slews, the average restarts, so spectra taken during a slew are not used.</li>
+<li>Works also with Alt-Az GOTO mounts, as long as the driver reports RA/Dec.</li>
+</ul>
+
+<h2 id="en-sci">13. Scientific use</h2>
+<p>The program is suited to amateur and educational science: rotation curve, l-v maps, drift scan surveys and comparison with the LAB or HI4PI surveys.</p>
+<ul>
+<li>Raw data is always kept; every correction (removed spectra and channels, Cold smoothing, drift correction, excluded ranges) is written in the metadata, so the processing can be repeated.</li>
+<li>The absolute temperature is approximate (about 10-20 %), because the air temperature and spillover are estimates. Line shapes and velocities are much more accurate.</li>
+<li>Stray radiation is not corrected. A small dish has a wide beam (0.9 m ≈ 16°).</li>
+<li>Use the Normal RFI mode, keep the Cold and measurement settings the same, take a new Cold regularly, and keep Info text on in published images (the display interpolation is cosmetic only).</li>
+</ul>
+
+<h2 id="en-trouble">14. Troubleshooting</h2>
+<table>
+<tr><th>Symptom</th><th>Cause / fix</th></tr>
+<tr><td>ADC OVERLOAD, Cold or Hot rejected</td><td>Gain too high. Lower the gain and redo Cold and Hot.</td></tr>
+<tr><td>The program closes unexpectedly</td><td>The reason is written to <code>Documents/H1-HUNTER SDR/crash_log.txt</code> (also crashes inside the receiver library, e.g. when the USB stick comes loose). Send the file to support. Check the USB connection.</td></tr>
+<tr><td>Gaps in raw IQ recordings, computer slow while recording</td><td>A slow hard disk, or a file search indexer (e.g. KDE Baloo) reading the large IQ files at the same time. Exclude the data folder from indexing (KDE: System Settings → Search → File Search) or pause indexing (<code>balooctl6 suspend</code>).</td></tr>
+<tr><td>Sample throughput clearly below 100 %</td><td>The computer cannot keep up. Lower the sample rate or the FFT, switch FFT overlap off, close other programs.</td></tr>
+<tr><td>Negative T_ant</td><td>Cold was taken where there was interference, ground or hydrogen. Take a new Cold at high empty sky and check interference sources (e.g. power supplies near the antenna).</td></tr>
+<tr><td>Level shifts or tilts over time</td><td>Gain drifts with temperature. Take a new Cold, use Gain drift correction or the reference relay.</td></tr>
+<tr><td>Narrow spikes always at the same frequencies</td><td>The receiver's own spurs. Remove flagged + Normal removes narrow ones; wider ones with Excluded ranges.</td></tr>
+<tr><td>Hot: "not clearly above Cold"</td><td>Hot is not warm enough: check the pointing, the absorber and the gain.</td></tr>
+<tr><td>Stick not found (Linux)</td><td>Unplug and plug the stick in again after the installation; restart the computer.</td></tr>
+<tr><td>Stick not found (Windows)</td><td>Install the WinUSB driver with Zadig.</td></tr>
+</table>
+</div>
+</main>
+<footer><div class="wrap">H1-HUNTER SDR v1.0 · Copyright (c) 2026 Jarkko Suominen</div></footer>
+<script>
+function setLang(l){document.body.className=l;document.documentElement.lang=l;
+document.getElementById('b-fi').className=l==='fi'?'on':'';document.getElementById('b-en').className=l==='en'?'on':'';
+try{localStorage.setItem('h1h_lang',l)}catch(e){}}
+var l0='';try{l0=localStorage.getItem('h1h_lang')||''}catch(e){}
+if(!l0){l0=((navigator.language||'en').toLowerCase().indexOf('fi')===0)?'fi':'en'}
+setLang(l0);
+</script>
+</body>
+</html>

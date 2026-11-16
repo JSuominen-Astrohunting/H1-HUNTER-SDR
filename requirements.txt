@@ -1,0 +1,9 @@
+# H1-HUNTER SDR v1.0 - Python libraries (tkinter comes with Python; on Linux install python3-tkinter / python3-tk)
+numpy
+scipy
+matplotlib
+astropy
+pyserial
+pyrtlsdr[lib]; sys_platform == "win32"
+pyrtlsdr; sys_platform != "win32"
+pywin32; sys_platform == "win32"
