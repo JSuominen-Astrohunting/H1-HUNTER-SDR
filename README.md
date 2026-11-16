@@ -19,7 +19,7 @@ the optional raw IQ recording (SigMF) and the optional FITS cube.
   RF spectrum and waterfall, sample-throughput monitor.
 - **Calibration** – Cold (empty sky) → Hot (ground / absorber) Y-factor calibration with a computed Cold-sky model
   (CMB, Galaxy, atmosphere and an automatic ground-spillover model from altitude and dish size).
-- **Bandpass removal** – division by the Cold spectrum, or by a smoothed bandpass model (optional).
+- **Bandpass and baseline removal** – each spectrum is divided by the Cold spectrum (P / P_cold, optionally with a smoothed Cold spectrum); after calibration a straight-line baseline fitted to the line-free channels is subtracted.
 - **Interference handling** – time-domain flagging, exact *Remove flagged*, narrow RFI channel search that cannot
   remove the hydrogen line, optional per-channel **spectral kurtosis** flagging, user excluded frequency ranges.
   Raw data is never altered.
