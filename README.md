@@ -16,17 +16,19 @@ are tabs in the same window – no command line or scripting is needed.
 
 ## Screenshots
 
-![Maps tab: RA/Dec map, the spectrum at the clicked point and an l–v thumbnail](docs/screenshot_maps.png)
-*Maps – click any point of the map and its spectrum opens on the right.*
-
-![Observe tab](docs/screenshot_observe.png)
-*Observe – pointing, calibration, the live hydrogen line, polar map and radiometer check.*
+The tabs follow the order of an observation: receiver → observe → maps.
 
 ![Receiver tab](docs/screenshot_receiver.png)
-*Receiver – tuning, gain, Bias-T and the RF spectrum with waterfall.*
+*1 Receiver – tuning, gain, Bias-T and the RF spectrum with waterfall.*
+
+![Observe tab](docs/screenshot_observe.png)
+*2 Observe – pointing, calibration, the live hydrogen line, polar map and radiometer check.*
 
 ![Hydrogen line towards Cygnus X](docs/screenshot_hydrogen_line.jpg)
 *A real observation towards Cygnus X (l 78.2°, b +1.9°) with a 0.9 m dish: calibrated, interference removed, raw data kept.*
+
+![Maps tab: RA/Dec map, the spectrum at the clicked point and an l–v thumbnail](docs/screenshot_maps.png)
+*3 Maps – click any point of the map and its spectrum opens on the right.*
 
 <p>
 <img src="docs/screenshot_lv_diagram.png" alt="l–v diagram" width="45%">
