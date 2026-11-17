@@ -11,6 +11,30 @@ step is documented and reproducible from the saved files.
 The program never uses the network. All saved data are plain text (CSV / JSON / TXT) or PNG; the only binary files are
 the optional raw IQ recording (SigMF) and the optional FITS cube.
 
+Everything runs in one graphical program: receiver, calibration, live hydrogen line, interference handling and maps
+are tabs in the same window – no command line or scripting is needed.
+
+## Screenshots
+
+![Maps tab: RA/Dec map, the spectrum at the clicked point and an l–v thumbnail](docs/screenshot_maps.png)
+*Maps – click any point of the map and its spectrum opens on the right.*
+
+![Observe tab](docs/screenshot_observe.png)
+*Observe – pointing, calibration, the live hydrogen line, polar map and radiometer check.*
+
+![Receiver tab](docs/screenshot_receiver.png)
+*Receiver – tuning, gain, Bias-T and the RF spectrum with waterfall.*
+
+![Hydrogen line towards Cygnus X](docs/screenshot_hydrogen_line.jpg)
+*A real observation towards Cygnus X (l 78.2°, b +1.9°) with a 0.9 m dish: calibrated, interference removed, raw data kept.*
+
+<p>
+<img src="docs/screenshot_lv_diagram.png" alt="l–v diagram" width="45%">
+<img src="docs/screenshot_milky_way_top_view.png" alt="Milky Way top view" width="52%">
+</p>
+
+*l–v diagram and Milky Way top view made from 51 measured points.*
+
 ---
 
 ## Features
