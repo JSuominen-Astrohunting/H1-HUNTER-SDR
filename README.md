@@ -68,7 +68,8 @@ The tabs follow the order of an observation: receiver → observe → maps.
 Version 1.0 has been tested with real RTL-SDR hardware and real 21 cm hydrogen line observations on Windows,
 Fedora Linux and Raspberry Pi systems. Single-dish observing, calibration, mapping, Velocity Cube generation and
 Science Package export have been tested with real RTL-SDR hardware and real hydrogen line observations.
-Raw-IQ validation is still ongoing.
+Raw IQ recording has been validated with real data: the saved averages, the Y factor and T_sys are reproduced from
+the raw samples, and gaps in a recording are marked.
 Some optional components (for example certain external devices) are still under active validation.
 
 ## H1-HUNTER family
