@@ -398,7 +398,7 @@ python h1_hunter_sdr.py
 
 ## Documentation
 
-- **User manual** (English / Finnish): [`h1h/MANUAL.html`](h1h/MANUAL.html) – also opened from
+- **User manual** (English / Finnish): [open in the browser](https://jsuominen-astrohunting.github.io/H1-HUNTER-SDR/h1h/MANUAL.html) (file `h1h/MANUAL.html`) – also opened from
   *Settings → User manual* in the program.
 - **Methods** – measurement, calibration and interference handling, with every formula and threshold:
   [`docs/H1-HUNTER_SDR_v1.0_Methods.pdf`](docs/H1-HUNTER_SDR_v1.0_Methods.pdf)
