@@ -85,10 +85,20 @@ development of the programs.
 
 ## Hardware
 
-- RTL-SDR stick (TCXO models such as RTL-SDR Blog V3 / V4 recommended)
+- RTL-SDR stick (TCXO models such as RTL-SDR Blog V3 / V4 recommended) – see *Supported receivers* below
 - LNA close to the feed and a hydrogen-line band-pass filter
 - Dish or horn with a 1420 MHz feed – any size; the dish diameter is entered in the program
 - Optional: GOTO mount, USB relay (LCUS-1 / CH340), temperature sensor, GPS time source
+
+### Supported receivers
+
+| Receiver | Status in v1.0 |
+|---|---|
+| RTL-SDR sticks (RTL2832U) with an R820T, R820T2 or R860 tuner – e.g. RTL-SDR Blog V3, Nooelec NESDR, generic sticks | supported, tested on Windows with a generic RTL2832U stick |
+| RTL-SDR Blog V4 (R828D tuner) | works on Windows, Fedora 43 or newer, Ubuntu 24.04 and Debian 13; **not** on Debian 12, Ubuntu 22.04 or Raspberry Pi OS (bookworm), whose system librtlsdr is too old; not yet tested with a V4 |
+| Sticks with an FC0012 or FC0013 tuner | not usable – the tuner does not reach 1420 MHz |
+| SDRplay, Airspy, HackRF, LimeSDR, PlutoSDR | not supported in v1.0 |
+| No hardware | built-in simulator (*Device: Simulator (no hardware)*) |
 
 ## Installation
 
